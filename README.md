@@ -40,3 +40,12 @@
 刪除任務。
 優先順序佇列：
 根據「重要性」和「緊急性」計算任務的優先級，並按分數高低排序顯示。
+
+
+
+docker build -t task-matrix-app .
+docker-compose up -d
+
+服務啟動後可透過以下網址訪問：
+http://localhost:3000
+
