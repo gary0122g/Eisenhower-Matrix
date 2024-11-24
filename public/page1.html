@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>行事曆</title>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5f7fa;
+            --text-color: #2c3e50;
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            background-color: var(--secondary-color);
+            margin: 0;
+            padding: 20px;
+            color: var(--text-color);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 15px;
+            margin: 20px auto;
+            max-width: 1000px;
+            padding: 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .day {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 15px;
+            min-height: 120px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
+        }
+
+        .day:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(74, 144, 226, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        .day-number {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .event {
+            background-color: rgba(74, 144, 226, 0.1);
+            border-left: 3px solid var(--primary-color);
+            border-radius: 4px;
+            padding: 8px;
+            margin-top: 8px;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .event:hover {
+            background-color: rgba(74, 144, 226, 0.2);
+        }
+
+        #eventForm {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 30px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            border-radius: var(--border-radius);
+            z-index: 1000;
+            width: 400px;
+        }
+
+        #eventForm input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #eee;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+
+        #eventForm button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background-color 0.3s;
+        }
+
+        #eventForm button:hover {
+            background-color: #357abd;
+        }
+
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 15px;
+            margin: 0 auto;
+            max-width: 1000px;
+            text-align: center;
+            font-weight: bold;
+            color: var(--primary-color);
+            padding: 15px;
+            background: white;
+            border-radius: var(--border-radius);
+            margin-bottom: 10px;
+        }
+
+        .menu {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .menu:hover {
+            transform: scale(1.1);
+        }
+
+        .menu-content {
+            display: none;
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+        }
+
+        .menu-content a {
+            display: block;
+            padding: 10px 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .menu-content a:hover {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+        }
+
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 999;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>行事曆</h1>
+    <div class="menu" onclick="toggleMenu()">☰</div>
+    <div class="menu-content" id="menuContent">
+        <a href="index.html">艾森豪</a>
+        <a href="page2.html">行程表</a>
+    </div>
+
+    <div class="weekdays">
+        <div>星期日</div>
+        <div>星期一</div>
+        <div>星期二</div>
+        <div>星期三</div>
+        <div>星期四</div>
+        <div>星期五</div>
+        <div>星期六</div>
+    </div>
+
+    <div id="overlay" onclick="closeForm()"></div>
+
+    <div id="eventForm">
+        <h2>新增行程</h2>
+        <p id="selectedDay"></p>
+        <label for="event">行程描述: </label>
+        <input type="text" id="event">
+        <br><br>
+        <button onclick="saveEvent()">儲存行程</button>
+        <button onclick="closeForm()">取消</button>
+    </div>
+
+    <div class="calendar" id="calendar">
+        <!-- 生成30天的日曆 -->
+        <script>
+            for (let i = 1; i <= 30; i++) {
+                document.write(`<div class="day" onclick="openForm(${i})"><span class="day-number">${i}</span></div>`);
+            }
+        </script>
+    </div>
+
+    <script>
+        let currentDay = null;
+
+        function openForm(day) {
+            currentDay = day;
+            document.getElementById('selectedDay').textContent = `選擇日期: ${day}`;
+            document.getElementById('eventForm').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closeForm() {
+            document.getElementById('eventForm').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('event').value = '';
+        }
+
+        function saveEvent() {
+            const eventText = document.getElementById('event').value;
+
+            if (eventText.trim() === '') {
+                alert('請輸入行程描述');
+                return;
+            }
+
+            const dayElement = document.getElementsByClassName('day')[currentDay - 1];
+            const eventElement = document.createElement('div');
+            eventElement.className = 'event';
+            eventElement.textContent = eventText;
+
+            dayElement.appendChild(eventElement);
+
+            closeForm();
+        }
+
+        function toggleMenu() {
+            const menuContent = document.getElementById('menuContent');
+            menuContent.style.display = menuContent.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // 點擊其他地方關閉選單
+        window.onclick = function (event) {
+            if (!event.target.matches('.menu')) {
+                const menuContent = document.getElementById('menuContent');
+                if (menuContent.style.display === 'block') {
+                    menuContent.style.display = 'none';
+                }
+            }
+        }
+    </script>
+
+</body>
+
+</html>
