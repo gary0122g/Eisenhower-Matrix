@@ -1,5 +1,5 @@
+![截圖 2024-11-26 下午5 37 25](https://github.com/user-attachments/assets/a28b1a83-c656-4e2d-ac2c-f08bcc0a6c2c)
 Eisenhower Matrix Task Management Tool
-
 This is a task management tool based on the Eisenhower Matrix theory, designed to help users classify and prioritize tasks according to their "importance" and "urgency." Users can add tasks, drag and adjust their positions, delete tasks, and automatically generate a sorted list based on task priorities. This application is suitable for personal time management and task planning.
 
 Features
