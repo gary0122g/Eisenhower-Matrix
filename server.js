@@ -7,8 +7,9 @@ const port = 3000;
 
 app.use(bodyParser.json());
 
-// 添加靜態文件服務
-app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(express.static(path.join(__dirname, './src')));
+app.use('/src', express.static(path.join(__dirname, 'src')));
 
 // Database connection
 const db = mysql.createConnection({
@@ -19,7 +20,6 @@ const db = mysql.createConnection({
     charset: 'utf8mb4',
     collation: 'utf8mb4_unicode_ci'
 });
-
 
 db.connect((err) => {
     if (err) throw err;
@@ -79,7 +79,7 @@ app.delete('/tasks/:id', (req, res) => {
     });
 });
 
-// 添加一個路由來提供 index.html
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
